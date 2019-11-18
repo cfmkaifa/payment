@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!-- 数据库驱动:换成你本地的驱动包位置-->
+    <classPathEntry  location="C:/Software/maven/repository/mysql/mysql-connector-java/5.1.46/mysql-connector-java-5.1.46.jar"/>
+    <context id="DB2Tables"  targetRuntime="MyBatis3">
+    		<property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 自定义的注释生成插件-->
+        <plugin type="com.chrm.mybatis.generator.plugins.CommentPlugin">
+            <!-- 抑制警告 -->
+            <property name="suppressTypeWarnings" value="true" />
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="false" />
+            <!-- 是否生成注释代时间戳-->
+            <property name="suppressDate" value="true" />
+        </plugin>
+        <!-- 整合lombok-->
+        <plugin type="com.chrm.mybatis.generator.plugins.LombokPlugin" >
+            <property name="hasLombok" value="true"/>
+        </plugin>
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!--数据库链接URL，用户名、密码 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://129.211.88.251:3306/forbesuser" userId="forbesuser" password="38BpEZPzGp4LyLjL">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- 生成模型的包名和位置-->
+        <javaModelGenerator targetPackage="org.forbes.dal.entity" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="rootClass" value="org.forbes.dal.entity.BaseEntity"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!-- 生成映射文件的包名和位置-->
+        <sqlMapGenerator targetPackage="org.forbes.dal.mapper.xml"  targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.forbes.dal.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <table tableName="f_sys_user"  domainObjectName="SysUser"          enableSelectByPrimaryKey="true" 
+        								   								  enableDeleteByPrimaryKey="true"
+        								   								  enableUpdateByPrimaryKey="true"
+        								   								  enableCountByExample="false" 
+        								   								  enableUpdateByExample="false" 
+        								   								  enableDeleteByExample="false" 
+        								   								  enableSelectByExample="false" 
+        								   								  selectByExampleQueryId="false" 
+        								   								  selectByPrimaryKeyQueryId="false">
+        	<property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="f_sys_role"  domainObjectName="SysRole"          enableSelectByPrimaryKey="true" 
+        								   								  enableDeleteByPrimaryKey="true"
+        								   								  enableUpdateByPrimaryKey="true"
+        								   								  enableCountByExample="false" 
+        								   								  enableUpdateByExample="false" 
+        								   								  enableDeleteByExample="false" 
+        								   								  enableSelectByExample="false" 
+        								   								  selectByExampleQueryId="false" 
+        								   								  selectByPrimaryKeyQueryId="false">
+        	<property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="f_sys_permission"  domainObjectName="SysPermission"          enableSelectByPrimaryKey="true" 
+        								   								  enableDeleteByPrimaryKey="true"
+        								   								  enableUpdateByPrimaryKey="true"
+        								   								  enableCountByExample="false" 
+        								   								  enableUpdateByExample="false" 
+        								   								  enableDeleteByExample="false" 
+        								   								  enableSelectByExample="false" 
+        								   								  selectByExampleQueryId="false" 
+        								   								  selectByPrimaryKeyQueryId="false">
+        	<property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="f_sys_role_permission"  domainObjectName="SysRolePermission"          enableSelectByPrimaryKey="true" 
+        								   								  enableDeleteByPrimaryKey="true"
+        								   								  enableUpdateByPrimaryKey="true"
+        								   								  enableCountByExample="false" 
+        								   								  enableUpdateByExample="false" 
+        								   								  enableDeleteByExample="false" 
+        								   								  enableSelectByExample="false" 
+        								   								  selectByExampleQueryId="false" 
+        								   								  selectByPrimaryKeyQueryId="false">
+        	<property name="useActualColumnNames" value="false"/>
+        </table>
+        <table tableName="f_sys_user_role"  domainObjectName="SysUserRole"          enableSelectByPrimaryKey="true" 
+        								   								  enableDeleteByPrimaryKey="true"
+        								   								  enableUpdateByPrimaryKey="true"
+        								   								  enableCountByExample="false" 
+        								   								  enableUpdateByExample="false" 
+        								   								  enableDeleteByExample="false" 
+        								   								  enableSelectByExample="false" 
+        								   								  selectByExampleQueryId="false" 
+        								   								  selectByPrimaryKeyQueryId="false">
+        	<property name="useActualColumnNames" value="false"/>
+        </table>
+    </context>
+</generatorConfiguration>
