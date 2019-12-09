@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.forbes.dal.mapper.TransOrderMapper" >
+  <resultMap id="BaseResultMap" type="org.forbes.dal.entity.TransOrder" >
+    <!-- 主键 -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <!-- 创建时间 -->
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <!-- 更新人 -->
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- 更新时间 -->
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <!-- 转账订单号 -->
+    <result column="trans_order_id" property="transOrderId" jdbcType="VARCHAR" />
+    <!-- 商户ID -->
+    <result column="mch_id" property="mchId" jdbcType="VARCHAR" />
+    <!-- 商户转账单号 -->
+    <result column="mch_trans_no" property="mchTransNo" jdbcType="VARCHAR" />
+    <!-- 渠道ID -->
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <!-- 转账金额,单位分 -->
+    <result column="amount" property="amount" jdbcType="BIGINT" />
+    <!-- 三位货币代码,人民币:cny -->
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <!-- 转账状态:0-订单生成,1-转账中,2-转账成功,3-转账失败,4-业务处理完成 -->
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <!-- 转账结果:0-不确认结果,1-等待手动处理,2-确认成功,3-确认失败 -->
+    <result column="result" property="result" jdbcType="TINYINT" />
+    <!-- 客户端IP -->
+    <result column="client_ip" property="clientIp" jdbcType="VARCHAR" />
+    <!-- 设备 -->
+    <result column="device" property="device" jdbcType="VARCHAR" />
+    <!-- 备注 -->
+    <result column="remark_info" property="remarkInfo" jdbcType="VARCHAR" />
+    <!-- 渠道用户标识,如微信openId,支付宝账号 -->
+    <result column="channel_user" property="channelUser" jdbcType="VARCHAR" />
+    <!-- 用户姓名 -->
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <!-- 渠道商户ID -->
+    <result column="channel_mch_id" property="channelMchId" jdbcType="VARCHAR" />
+    <!-- 渠道订单号 -->
+    <result column="channel_order_no" property="channelOrderNo" jdbcType="VARCHAR" />
+    <!-- 渠道错误码 -->
+    <result column="channel_err_code" property="channelErrCode" jdbcType="VARCHAR" />
+    <!-- 渠道错误描述 -->
+    <result column="channel_err_msg" property="channelErrMsg" jdbcType="VARCHAR" />
+    <!-- 特定渠道发起时额外参数 -->
+    <result column="extra" property="extra" jdbcType="VARCHAR" />
+    <!-- 通知地址 -->
+    <result column="notify_url" property="notifyUrl" jdbcType="VARCHAR" />
+    <!-- 扩展参数1 -->
+    <result column="param1" property="param1" jdbcType="VARCHAR" />
+    <!-- 扩展参数2 -->
+    <result column="param2" property="param2" jdbcType="VARCHAR" />
+    <!-- 订单失效时间 -->
+    <result column="expire_time" property="expireTime" jdbcType="TIMESTAMP" />
+    <!-- 订单转账成功时间 -->
+    <result column="trans_succ_time" property="transSuccTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, update_by, update_time, trans_order_id, mch_id, mch_trans_no, 
+    channel_id, amount, currency, status, result, client_ip, device, remark_info, channel_user, 
+    user_name, channel_mch_id, channel_order_no, channel_err_code, channel_err_msg, extra, 
+    notify_url, param1, param2, expire_time, trans_succ_time
+  </sql>
+</mapper>

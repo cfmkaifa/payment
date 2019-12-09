@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.forbes.dal.mapper.IapReceiptMapper" >
+  <resultMap id="BaseResultMap" type="org.forbes.dal.entity.IapReceipt" >
+    <!-- 主键 -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <!-- 创建时间 -->
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <!-- 更新人 -->
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- 更新时间 -->
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <!-- 支付订单号 -->
+    <result column="pay_order_id" property="payOrderId" jdbcType="VARCHAR" />
+    <!-- 商户ID -->
+    <result column="mch_id" property="mchId" jdbcType="VARCHAR" />
+    <!-- IAP业务号 -->
+    <result column="transaction_id" property="transactionId" jdbcType="VARCHAR" />
+    <!-- 处理状态:0-未处理,1-处理成功,-1-处理失败 -->
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <!-- 处理次数 -->
+    <result column="handle_count" property="handleCount" jdbcType="TINYINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="org.forbes.dal.entity.IapReceipt" extends="BaseResultMap" >
+    <!-- 渠道ID -->
+    <result column="receipt_data" property="receiptData" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, update_by, update_time, pay_order_id, mch_id, transaction_id, 
+    status, handle_count
+  </sql>
+  <sql id="Blob_Column_List" >
+    receipt_data
+  </sql>
+</mapper>

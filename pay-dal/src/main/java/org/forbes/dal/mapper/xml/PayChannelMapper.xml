@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.forbes.dal.mapper.PayChannelMapper" >
+  <resultMap id="BaseResultMap" type="org.forbes.dal.entity.PayChannel" >
+    <!-- 主键 -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <!-- 创建时间 -->
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <!-- 更新人 -->
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+    <!-- 更新时间 -->
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <!-- 渠道ID -->
+    <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+    <!-- 渠道名称,如:alipay,wechat -->
+    <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+    <!-- 渠道商户ID -->
+    <result column="channel_mch_id" property="channelMchId" jdbcType="VARCHAR" />
+    <!-- 商户ID -->
+    <result column="mch_id" property="mchId" jdbcType="VARCHAR" />
+    <!-- 渠道状态,0-停止使用,1-使用中 -->
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <!-- 配置参数,json字符串 -->
+    <result column="param" property="param" jdbcType="VARCHAR" />
+    <!-- 备注 -->
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, create_by, create_time, update_by, update_time, channel_id, channel_name, channel_mch_id, 
+    mch_id, state, param, remark
+  </sql>
+</mapper>
