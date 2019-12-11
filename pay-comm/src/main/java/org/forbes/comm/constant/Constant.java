@@ -30,5 +30,7 @@ public class Constant {
 
     // 服务端返回map中业务数据结果对应的key名称
     public static final String BIZ_RESULT_KEY = "bizResult";
+    /****常用属性***/
+    public static final String MCH_ID = "mchId";  
 
 }

@@ -19,7 +19,9 @@ import lombok.experimental.Accessors;
 @TableName(value="f_trans_order")
 public class TransOrder extends BaseEntity {
 
+
 	private static final long serialVersionUID = 3194828952197963890L;
+
 
 	/**
      * 转账订单号

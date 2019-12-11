@@ -1,11 +1,15 @@
 package org.forbes.comm.domain;
 
-import org.xxpay.common.enumm.RpcSignTypeEnum;
-import org.xxpay.common.util.*;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.forbes.comm.enumm.RpcSignTypeEnum;
+import org.forbes.comm.util.BeanConvertUtils;
+import org.forbes.comm.util.BizSequenceUtils;
+import org.forbes.comm.util.DateUtils;
+import org.forbes.comm.util.RandomStrUtils;
+import org.forbes.comm.util.RpcSignUtils;
 /***
  * RpcBaseParam概要说明：服务接口调用入参基类
  * @author Huanghy
