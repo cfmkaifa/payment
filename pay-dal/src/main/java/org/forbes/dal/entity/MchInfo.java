@@ -1,11 +1,14 @@
 package org.forbes.dal.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * Table: f_mch_info
@@ -13,7 +16,6 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel(description="商家信息")
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName(value="f_mch_info")
 public class MchInfo extends BaseEntity {
 
@@ -25,6 +27,8 @@ public class MchInfo extends BaseEntity {
      * Column:    mch_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="商家ID",required = true)
+	@NotEmpty(message="商家ID为空")
     private String mchId;
 
     /**
@@ -33,6 +37,8 @@ public class MchInfo extends BaseEntity {
      * Column:    name
      * Nullable:  false
      */
+	@ApiModelProperty(value="商家名称",required = true)
+	@NotEmpty(message="商家名称为空")
     private String name;
 
     /**
@@ -41,6 +47,8 @@ public class MchInfo extends BaseEntity {
      * Column:    type
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户类型",required = true)
+	@NotEmpty(message="商户类型为空")
     private String type;
 
     /**
@@ -49,6 +57,8 @@ public class MchInfo extends BaseEntity {
      * Column:    req_key
      * Nullable:  false
      */
+	@ApiModelProperty(value="请求私钥",required = true)
+	@NotEmpty(message="请求私钥为空")
     private String reqKey;
 
     /**
@@ -57,6 +67,8 @@ public class MchInfo extends BaseEntity {
      * Column:    res_key
      * Nullable:  false
      */
+	@ApiModelProperty(value="响应私钥",required = true)
+	@NotEmpty(message="响应私钥为空")
     private String resKey;
 
     /**
@@ -65,5 +77,7 @@ public class MchInfo extends BaseEntity {
      * Column:    state
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户状态",required = true,example="0")
+	@NotNull(message="商户状态为空")
     private Byte state;
 }

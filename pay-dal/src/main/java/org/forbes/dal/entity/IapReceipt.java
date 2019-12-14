@@ -3,9 +3,9 @@ package org.forbes.dal.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * Table: f_iap_receipt
@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel(description="支付凭证")
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName(value="f_iap_receipt")
 public class IapReceipt extends BaseEntity {
     
@@ -25,6 +24,7 @@ public class IapReceipt extends BaseEntity {
      * Column:    pay_order_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="支付订单号")
     private String payOrderId;
 
     /**
@@ -33,6 +33,7 @@ public class IapReceipt extends BaseEntity {
      * Column:    mch_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户ID")
     private String mchId;
 
     /**
@@ -41,6 +42,7 @@ public class IapReceipt extends BaseEntity {
      * Column:    transaction_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="IAP业务号")
     private String transactionId;
 
     /**
@@ -49,6 +51,7 @@ public class IapReceipt extends BaseEntity {
      * Column:    status
      * Nullable:  false
      */
+	@ApiModelProperty(value="处理状态:0-未处理,1-处理成功,-1-处理失败")
     private Byte status;
 
     /**
@@ -57,6 +60,7 @@ public class IapReceipt extends BaseEntity {
      * Column:    handle_count
      * Nullable:  false
      */
+	@ApiModelProperty(value="处理次数")
     private Byte handleCount;
 
     /**
@@ -65,5 +69,6 @@ public class IapReceipt extends BaseEntity {
      * Column:    receipt_data
      * Nullable:  false
      */
+	@ApiModelProperty(value="渠道ID")
     private String receiptData;
 }

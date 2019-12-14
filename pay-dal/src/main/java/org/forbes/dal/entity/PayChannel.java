@@ -1,11 +1,14 @@
 package org.forbes.dal.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * Table: f_pay_channel
@@ -13,7 +16,6 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel(description="支付渠道")
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName(value="f_pay_channel")
 public class PayChannel extends BaseEntity {
     
@@ -26,6 +28,8 @@ public class PayChannel extends BaseEntity {
      * Column:    channel_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="渠道ID",required=true)
+	@NotEmpty(message="渠道ID为空")
     private String channelId;
 
     /**
@@ -34,6 +38,8 @@ public class PayChannel extends BaseEntity {
      * Column:    channel_name
      * Nullable:  false
      */
+	@ApiModelProperty(value="渠道名称",required=true)
+	@NotEmpty(message="渠道名称为空")
     private String channelName;
 
     /**
@@ -42,6 +48,8 @@ public class PayChannel extends BaseEntity {
      * Column:    channel_mch_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="渠道商户ID",required=true)
+	@NotEmpty(message="渠道商户ID为空")
     private String channelMchId;
 
     /**
@@ -50,6 +58,8 @@ public class PayChannel extends BaseEntity {
      * Column:    mch_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户ID",required=true)
+	@NotEmpty(message="商户ID为空")
     private String mchId;
 
     /**
@@ -58,6 +68,8 @@ public class PayChannel extends BaseEntity {
      * Column:    state
      * Nullable:  false
      */
+	@ApiModelProperty(value="渠道状态",required=true)
+	@NotNull(message="渠道状态为空")
     private Byte state;
 
     /**
@@ -66,6 +78,7 @@ public class PayChannel extends BaseEntity {
      * Column:    param
      * Nullable:  false
      */
+	@ApiModelProperty(value="配置参数,json字符串")
     private String param;
 
     /**
@@ -74,5 +87,6 @@ public class PayChannel extends BaseEntity {
      * Column:    remark
      * Nullable:  true
      */
+	@ApiModelProperty(value="备注")
     private String remark;
 }

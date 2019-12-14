@@ -1,4 +1,4 @@
-package org.forbes.provider;
+package org.forbes.server;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -9,14 +9,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.forbes.biz.IMchInfoService;
+import org.forbes.comm.constant.DataColumnConstant;
 import org.forbes.comm.constant.PayConstant;
 import org.forbes.comm.util.PayDigestUtil;
+import org.forbes.comm.util.XXPayUtil;
 import org.forbes.dal.entity.MchInfo;
 import org.forbes.dal.entity.PayOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import lombok.extern.slf4j.Slf4j;
 /***
@@ -42,7 +45,8 @@ public class Notify4BasePay {
 	 */
 	public String createNotifyUrl(PayOrder payOrder, String backType) {
 		String mchId = payOrder.getMchId();
-		MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+		MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+				.eq(DataColumnConstant.MCH_ID, mchId));
 		String resKey = mchInfo.getResKey();
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("payOrderId", payOrder.getPayOrderId() == null ? "" : payOrder.getPayOrderId());           // 支付订单号
@@ -110,6 +114,15 @@ public class Notify4BasePay {
 		log.info(">>>>>> PAY回调通知业务系统完成 <<<<<<");
 	}
 
+	/****
+	 * createNotifyInfo方法慨述:
+	 * @param payOrder
+	 * @return JSONObject
+	 * @创建人 huanghy
+	 * @创建时间 2019年12月13日 上午9:47:04
+	 * @修改人 (修改了该文件，请填上修改人的名字)
+	 * @修改日期 (请填上修改该文件时的日期)
+	 */
 	public JSONObject createNotifyInfo(PayOrder payOrder) {
 		JSONObject object = new JSONObject();
 		object.put("method", "GET");

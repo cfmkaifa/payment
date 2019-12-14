@@ -1,21 +1,24 @@
 package org.forbes.comm.util;
 
-import com.alibaba.fastjson.JSON;
-import org.xxpay.common.constant.PayConstant;
-import org.xxpay.common.constant.PayEnum;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.forbes.comm.constant.PayConstant;
+import org.forbes.comm.enumm.PayEnum;
+
+import com.alibaba.fastjson.JSON;
+
+import lombok.extern.slf4j.Slf4j;
 /***
  * ForbesPayUtil概要说明：
  * @author Huanghy
  */
+@Slf4j
 public class ForbesPayUtil {
 
-    private static final MyLog _log = MyLog.getLog(ForbesPayUtil.class);
 
     public static Map<String, Object> makeRetMap(String retCode, String retMsg, String resCode, String errCode, String errCodeDesc) {
         Map<String, Object> retMap = new HashMap<String, Object>();
@@ -44,12 +47,12 @@ public class ForbesPayUtil {
             String sign = PayDigestUtil.getSign(retMap, resKey, "payParams");
             retMap.put(PayConstant.RESULT_PARAM_SIGN, sign);
         }
-        _log.info("生成响应数据:{}", retMap);
+        log.info("生成响应数据:{}", retMap);
         return JSON.toJSONString(retMap);
     }
 
     public static String makeRetFail(Map retMap) {
-        _log.info("生成响应数据:{}", retMap);
+    	log.info("生成响应数据:{}", retMap);
         return JSON.toJSONString(retMap);
     }
 

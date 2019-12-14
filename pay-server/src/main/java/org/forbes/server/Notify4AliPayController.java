@@ -1,4 +1,4 @@
-package org.forbes.provider;
+package org.forbes.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,13 +13,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.forbes.biz.IPayChannelService;
 import org.forbes.biz.IPayOrderService;
+import org.forbes.comm.constant.DataColumnConstant;
 import org.forbes.comm.constant.PayConstant;
+import org.forbes.config.channel.alipay.AlipayConfig;
 import org.forbes.dal.entity.PayChannel;
 import org.forbes.dal.entity.PayOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.internal.util.AlipaySignature;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import lombok.extern.slf4j.Slf4j;
 /***
@@ -66,13 +72,26 @@ public class Notify4AliPayController extends Notify4BasePay {
 
 	}
 
+	
+	/****
+	 * doAliPayRes方法慨述:
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException String
+	 * @创建人 huanghy
+	 * @创建时间 2019年12月11日 下午5:56:48
+	 * @修改人 (修改了该文件，请填上修改人的名字)
+	 * @修改日期 (请填上修改该文件时的日期)
+	 */
 	public String doAliPayRes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String logPrefix = "【支付宝支付回调通知】";
 		log.info("====== 开始接收支付宝支付回调通知 ======");
 		//获取支付宝POST过来反馈信息
 		Map<String,String> params = new HashMap<String,String>();
-		Map requestParams = request.getParameterMap();
-		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+		Map<String,String[]> requestParams = request.getParameterMap();
+		for (Iterator<String> iter = requestParams.keySet().iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
 			String[] values = (String[]) requestParams.get(name);
 			String valueStr = "";
@@ -89,10 +108,9 @@ public class Notify4AliPayController extends Notify4BasePay {
 			log.error("{}请求参数为空", logPrefix);
 			return PayConstant.RETURN_ALIPAY_VALUE_FAIL;
 		}
-		Map<String, Object> payContext = new HashMap();
+		Map<String, Object> payContext = new HashMap<String, Object>();
 		PayOrder payOrder;
 		payContext.put("parameters", params);
-
 		if(!verifyAliPayParams(payContext)) {
 			return PayConstant.RETURN_ALIPAY_VALUE_FAIL;
 		}
@@ -101,12 +119,15 @@ public class Notify4AliPayController extends Notify4BasePay {
 		// 支付状态成功或者完成
 		if (trade_status.equals(PayConstant.AlipayConstant.TRADE_STATUS_SUCCESS) ||
 				trade_status.equals(PayConstant.AlipayConstant.TRADE_STATUS_FINISHED)) {
-			int updatePayOrderRows;
+			boolean updatePayOrderRows;
 			payOrder = (PayOrder)payContext.get("payOrder");
 			byte payStatus = payOrder.getStatus(); // 0：订单生成，1：支付中，-1：支付失败，2：支付成功，3：业务处理完成，-2：订单过期
-			if (payStatus != PayConstant.PAY_STATUS_SUCCESS && payStatus != PayConstant.PAY_STATUS_COMPLETE) {
-				updatePayOrderRows = payOrderService.updateStatus4Success(payOrder.getPayOrderId());
-				if (updatePayOrderRows != 1) {
+			if (payStatus != PayConstant.PAY_STATUS_SUCCESS 
+					&& payStatus != PayConstant.PAY_STATUS_COMPLETE) {
+		        payOrder.setStatus(PayConstant.PAY_STATUS_SUCCESS);
+		        payOrder.setPaySuccTime(System.currentTimeMillis());
+				updatePayOrderRows =  payOrderService.updateById(payOrder);
+				if (!updatePayOrderRows) {
 					log.error("{}更新支付状态失败,将payOrderId={},更新payStatus={}失败", logPrefix, payOrder.getPayOrderId(), PayConstant.PAY_STATUS_SUCCESS);
 					log.info("{}响应给支付宝结果：{}", logPrefix, PayConstant.RETURN_ALIPAY_VALUE_FAIL);
 					return PayConstant.RETURN_ALIPAY_VALUE_FAIL;
@@ -125,9 +146,14 @@ public class Notify4AliPayController extends Notify4BasePay {
 		return PayConstant.RETURN_ALIPAY_VALUE_SUCCESS;
 	}
 	
-	/**
-	 * 验证支付宝支付通知参数
-	 * @return
+	/***
+	 * verifyAliPayParams方法慨述:验证支付宝支付通知参数
+	 * @param payContext
+	 * @return boolean
+	 * @创建人 huanghy
+	 * @创建时间 2019年12月13日 上午9:49:50
+	 * @修改人 (修改了该文件，请填上修改人的名字)
+	 * @修改日期 (请填上修改该文件时的日期)
 	 */
 	public boolean verifyAliPayParams(Map<String, Object> payContext) {
 		Map<String,String> params = (Map<String,String>)payContext.get("parameters");
@@ -146,7 +172,8 @@ public class Notify4AliPayController extends Notify4BasePay {
 		String errorMessage;
 		// 查询payOrder记录
 		String payOrderId = out_trade_no;
-		PayOrder payOrder = payOrderService.selectPayOrder(payOrderId);
+		PayOrder payOrder = payOrderService.getOne(new QueryWrapper<PayOrder>()
+				.eq(DataColumnConstant.PAY_ORDER_ID, payOrderId));
 		if (payOrder == null) {
 			log.error("Can't found payOrder form db. payOrderId={}, ", payOrderId);
 			payContext.put("retMsg", "Can't found payOrder");
@@ -155,7 +182,9 @@ public class Notify4AliPayController extends Notify4BasePay {
 		// 查询payChannel记录
 		String mchId = payOrder.getMchId();
 		String channelId = payOrder.getChannelId();
-		PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+		PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+				.eq(DataColumnConstant.CHANNEL_ID, channelId)
+				.eq(DataColumnConstant.MCH_ID, mchId));
 		if(payChannel == null) {
 			log.error("Can't found payChannel form db. mchId={} channelId={}, ", payOrderId, mchId, channelId);
 			payContext.put("retMsg", "Can't found payChannel");
@@ -165,9 +194,8 @@ public class Notify4AliPayController extends Notify4BasePay {
 		try {
 			verify_result = AlipaySignature.rsaCheckV1(params, alipayConfig.init(payChannel.getParam()).getAlipay_public_key(), AlipayConfig.CHARSET, "RSA2");
 		} catch (AlipayApiException e) {
-			log.error(e, "AlipaySignature.rsaCheckV1 error");
+			log.trace("AlipaySignature.rsaCheckV1 error",e);
 		}
-
 		// 验证签名
 		if (!verify_result) {
 			errorMessage = "rsaCheckV1 failed.";
@@ -175,7 +203,6 @@ public class Notify4AliPayController extends Notify4BasePay {
 			payContext.put("retMsg", errorMessage);
 			return false;
 		}
-
 		// 核对金额
 		long aliPayAmt = new BigDecimal(total_amount).movePointRight(2).longValue();
 		long dbPayAmt = payOrder.getAmount().longValue();

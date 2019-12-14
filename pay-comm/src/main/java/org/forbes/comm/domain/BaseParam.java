@@ -1,10 +1,18 @@
 package org.forbes.comm.domain;
 
-import org.apache.commons.lang3.StringUtils;
-import org.xxpay.common.enumm.RpcSignTypeEnum;
-import org.xxpay.common.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import org.apache.commons.lang3.StringUtils;
+import org.forbes.comm.enumm.RpcSignTypeEnum;
+import org.forbes.comm.util.BizSequenceUtils;
+import org.forbes.comm.util.DateUtils;
+import org.forbes.comm.util.JsonUtil;
+import org.forbes.comm.util.RandomStrUtils;
+import org.forbes.comm.util.RpcSignUtils;
 /***
  * BaseParam概要说明：
  * @author Huanghy

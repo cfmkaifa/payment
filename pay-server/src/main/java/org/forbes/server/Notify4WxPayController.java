@@ -1,4 +1,4 @@
-package org.forbes.provider;
+package org.forbes.server;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -12,13 +12,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.forbes.biz.IPayChannelService;
 import org.forbes.biz.IPayOrderService;
+import org.forbes.comm.constant.DataColumnConstant;
 import org.forbes.comm.constant.PayConstant;
+import org.forbes.config.channel.wechat.WxPayUtil;
 import org.forbes.dal.entity.PayChannel;
 import org.forbes.dal.entity.PayOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 /***
@@ -49,6 +59,18 @@ public class Notify4WxPayController extends Notify4BasePay {
 		return doWxPayRes(request, response);
 	}
 
+	/***
+	 * doWxPayRes方法慨述:
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException String
+	 * @创建人 huanghy
+	 * @创建时间 2019年12月13日 上午9:46:11
+	 * @修改人 (修改了该文件，请填上修改人的名字)
+	 * @修改日期 (请填上修改该文件时的日期)
+	 */
 	public String doWxPayRes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String logPrefix = "【微信支付回调通知】";
 		log.info("====== 开始接收微信支付回调通知 ======");
@@ -56,7 +78,7 @@ public class Notify4WxPayController extends Notify4BasePay {
 			String xmlResult = IOUtils.toString(request.getInputStream(), request.getCharacterEncoding());
 			WxPayService wxPayService = new WxPayServiceImpl();
 			WxPayOrderNotifyResult result = WxPayOrderNotifyResult.fromXML(xmlResult);
-			Map<String, Object> payContext = new HashMap();
+			Map<String, Object> payContext = new HashMap<String, Object>();
 			payContext.put("parameters", result);
 			// 验证业务数据是否正确,验证通过后返回PayOrder和WxPayConfig对象
 			if(!verifyWxPayParams(payContext)) {
@@ -84,13 +106,13 @@ public class Notify4WxPayController extends Notify4BasePay {
 			return WxPayNotifyResponse.success("处理成功");
 		} catch (WxPayException e) {
 			//出现业务错误
-			log.error(e, "微信回调结果异常,异常原因");
+			log.trace("微信回调结果异常,异常原因",e);
 			log.info("{}请求数据result_code=FAIL", logPrefix);
 			log.info("err_code:", e.getErrCode());
 			log.info("err_code_des:", e.getErrCodeDes());
 			return WxPayNotifyResponse.fail(e.getMessage());
 		} catch (Exception e) {
-			log.error(e, "微信回调结果异常,异常原因");
+			log.error("微信回调结果异常,异常原因",e);
 			return WxPayNotifyResponse.fail(e.getMessage());
 		}
 	}
@@ -115,7 +137,8 @@ public class Notify4WxPayController extends Notify4BasePay {
 
 		// 查询payOrder记录
 		String payOrderId = out_trade_no;
-		PayOrder payOrder = payOrderService.selectPayOrder(payOrderId);
+		PayOrder payOrder = payOrderService.getOne(new QueryWrapper<PayOrder>()
+				.eq(DataColumnConstant.PAY_ORDER_ID, payOrderId));
 		if (payOrder==null) {
 			log.error("Can't found payOrder form db. payOrderId={}, ", payOrderId);
 			payContext.put("retMsg", "Can't found payOrder");
@@ -125,7 +148,10 @@ public class Notify4WxPayController extends Notify4BasePay {
 		// 查询payChannel记录
 		String mchId = payOrder.getMchId();
 		String channelId = payOrder.getChannelId();
-		PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+		PayChannel payChannel = payChannelService
+				.getOne(new QueryWrapper<PayChannel>()
+						.eq(DataColumnConstant.CHANNEL_ID, channelId)
+						.eq(DataColumnConstant.MCH_ID, mchId));
 		if(payChannel == null) {
 			log.error("Can't found payChannel form db. mchId={} channelId={}, ", payOrderId, mchId, channelId);
 			payContext.put("retMsg", "Can't found payChannel");

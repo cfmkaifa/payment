@@ -1,4 +1,4 @@
-package org.forbes.comm.constant;
+package org.forbes.comm.enumm;
 /***
  * PayEnum概要说明：支付返回码定义
  * @author Huanghy

@@ -19,8 +19,6 @@ public class BaseEntity implements Serializable  {
      * id
      */
     @TableId(type = IdType.AUTO)
-    @JSONField(format="yyyy-MM-dd")
-	@JsonFormat(pattern="yyyy-MM-dd")
     private Long id;
     
     

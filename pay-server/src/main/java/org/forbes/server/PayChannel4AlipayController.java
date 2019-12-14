@@ -1,4 +1,4 @@
-package org.forbes.provider;
+package org.forbes.server;
 
 import java.util.Map;
 
@@ -7,10 +7,13 @@ import org.apache.commons.lang.StringUtils;
 import org.forbes.biz.IMchInfoService;
 import org.forbes.biz.IPayChannelService;
 import org.forbes.biz.IPayOrderService;
+import org.forbes.comm.constant.DataColumnConstant;
 import org.forbes.comm.constant.PayConstant;
-import org.forbes.comm.constant.PayEnum;
+import org.forbes.comm.enumm.PayEnum;
 import org.forbes.comm.util.AmountUtil;
 import org.forbes.comm.util.MyBase64;
+import org.forbes.comm.util.XXPayUtil;
+import org.forbes.config.channel.alipay.AlipayConfig;
 import org.forbes.dal.entity.MchInfo;
 import org.forbes.dal.entity.PayChannel;
 import org.forbes.dal.entity.PayOrder;
@@ -21,6 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayApiException;
+import com.alipay.api.AlipayClient;
+import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeAppPayModel;
+import com.alipay.api.domain.AlipayTradePagePayModel;
+import com.alipay.api.domain.AlipayTradePrecreateModel;
+import com.alipay.api.domain.AlipayTradeWapPayModel;
+import com.alipay.api.request.AlipayTradeAppPayRequest;
+import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradePrecreateRequest;
+import com.alipay.api.request.AlipayTradeWapPayRequest;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 
 import lombok.extern.slf4j.Slf4j;
 /***
@@ -43,11 +58,14 @@ public class PayChannel4AlipayController {
     @Autowired
     private IMchInfoService mchInfoService;
 
-    /**
-     * 支付宝手机网站支付
-     * 文档：https://docs.open.alipay.com/203/107090/
+    /***
+     * doAliPayWapReq方法慨述:支付宝手机网站支付
      * @param jsonParam
-     * @return
+     * @return String
+     * @创建人 huanghy
+     * @创建时间 2019年12月13日 上午9:20:38
+     * @修改人 (修改了该文件，请填上修改人的名字)
+     * @修改日期 (请填上修改该文件时的日期)
      */
     @RequestMapping(value = "/pay/channel/ali-wap")
     public String doAliPayWapReq(@RequestParam String jsonParam) {
@@ -57,10 +75,13 @@ public class PayChannel4AlipayController {
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
         String channelId = payOrder.getChannelId();
-        MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+        MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if("".equals(resKey)) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+        PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+        		.eq(DataColumnConstant.CHANNEL_ID, channelId)
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayTradeWapPayRequest alipay_request = new AlipayTradeWapPayRequest();
@@ -105,10 +126,13 @@ public class PayChannel4AlipayController {
     }
 
     /**
-     * 支付宝电脑网站支付
-     * 文档：https://docs.open.alipay.com/270/105899/
+     * doAliPayPcReq方法慨述:支付宝电脑网站支付
      * @param jsonParam
-     * @return
+     * @return String
+     * @创建人 huanghy
+     * @创建时间 2019年12月13日 上午9:24:24
+     * @修改人 (修改了该文件，请填上修改人的名字)
+     * @修改日期 (请填上修改该文件时的日期)
      */
     @RequestMapping(value = "/pay/channel/ali-pc")
     public String doAliPayPcReq(@RequestParam String jsonParam) {
@@ -118,10 +142,13 @@ public class PayChannel4AlipayController {
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
         String channelId = payOrder.getChannelId();
-        MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+        MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if("".equals(resKey)) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+        PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+        		.eq(DataColumnConstant.CHANNEL_ID, channelId)
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayTradePagePayRequest alipay_request = new AlipayTradePagePayRequest();
@@ -168,11 +195,14 @@ public class PayChannel4AlipayController {
         return XXPayUtil.makeRetData(map, resKey);
     }
 
-    /**
-     * 支付宝APP支付,生产签名及请求支付宝的参数(注:不会向支付宝发请求)
-     * 文档: https://docs.open.alipay.com/204/105465/
+    /***
+     * doAliPayMobileReq方法慨述:支付宝APP支付,生产签名及请求支付宝的参数(注:不会向支付宝发请求)
      * @param jsonParam
-     * @return
+     * @return String
+     * @创建人 huanghy
+     * @创建时间 2019年12月13日 上午9:24:12
+     * @修改人 (修改了该文件，请填上修改人的名字)
+     * @修改日期 (请填上修改该文件时的日期)
      */
     @RequestMapping(value = "/pay/channel/ali-mobile")
     public String doAliPayMobileReq(@RequestParam String jsonParam) {
@@ -182,10 +212,13 @@ public class PayChannel4AlipayController {
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
         String channelId = payOrder.getChannelId();
-        MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+        MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if("".equals(resKey)) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+        PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+        		.eq(DataColumnConstant.CHANNEL_ID, channelId)
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayTradeAppPayRequest alipay_request = new AlipayTradeAppPayRequest();
@@ -216,12 +249,15 @@ public class PayChannel4AlipayController {
         return XXPayUtil.makeRetData(map, resKey);
     }
 
-    /**
-     * 支付宝当面付之扫码支付
-     * 文档：https://docs.open.alipay.com/api_1/alipay.trade.precreate
-     * @param jsonParam
-     * @return
-     */
+   /***
+    * doAliPayQrReq方法慨述:支付宝当面付之扫码支付
+    * @param jsonParam
+    * @return String
+    * @创建人 huanghy
+    * @创建时间 2019年12月13日 上午9:24:01
+    * @修改人 (修改了该文件，请填上修改人的名字)
+    * @修改日期 (请填上修改该文件时的日期)
+    */
     @RequestMapping(value = "/pay/channel/ali-qr")
     public String doAliPayQrReq(@RequestParam String jsonParam) {
         String logPrefix = "【支付宝当面付之扫码支付下单】";
@@ -230,10 +266,13 @@ public class PayChannel4AlipayController {
         String payOrderId = payOrder.getPayOrderId();
         String mchId = payOrder.getMchId();
         String channelId = payOrder.getChannelId();
-        MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+        MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         String resKey = mchInfo == null ? "" : mchInfo.getResKey();
         if("".equals(resKey)) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-        PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+        PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+        		.eq(DataColumnConstant.CHANNEL_ID, channelId)
+        		.eq(DataColumnConstant.MCH_ID, mchId));
         alipayConfig.init(payChannel.getParam());
         AlipayClient client = new DefaultAlipayClient(alipayConfig.getUrl(), alipayConfig.getApp_id(), alipayConfig.getRsa_private_key(), AlipayConfig.FORMAT, AlipayConfig.CHARSET, alipayConfig.getAlipay_public_key(), AlipayConfig.SIGNTYPE);
         AlipayTradePrecreateRequest alipay_request = new AlipayTradePrecreateRequest();

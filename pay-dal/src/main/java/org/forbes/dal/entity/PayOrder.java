@@ -1,8 +1,11 @@
 package org.forbes.dal.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -13,7 +16,6 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel(description="支付订单")
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName(value="f_pay_order")
 public class PayOrder extends BaseEntity {
    
@@ -25,6 +27,7 @@ public class PayOrder extends BaseEntity {
      * Column:    pay_order_id
      * Nullable:  false
      */
+	 @ApiModelProperty(value="支付订单号")
     private String payOrderId;
 
     /**
@@ -33,6 +36,7 @@ public class PayOrder extends BaseEntity {
      * Column:    mch_id
      * Nullable:  false
      */
+	 @ApiModelProperty(value="商户ID")
     private String mchId;
 
     /**
@@ -41,6 +45,7 @@ public class PayOrder extends BaseEntity {
      * Column:    mch_order_no
      * Nullable:  false
      */
+	 @ApiModelProperty(value="商户订单号")
     private String mchOrderNo;
 
     /**
@@ -49,6 +54,7 @@ public class PayOrder extends BaseEntity {
      * Column:    channel_id
      * Nullable:  false
      */
+	 @ApiModelProperty(value="渠道ID")
     private String channelId;
 
     /**
@@ -57,6 +63,7 @@ public class PayOrder extends BaseEntity {
      * Column:    amount
      * Nullable:  false
      */
+	 @ApiModelProperty(value="支付金额,单位分",example="0.0")
     private Long amount;
 
     /**
@@ -65,6 +72,7 @@ public class PayOrder extends BaseEntity {
      * Column:    currency
      * Nullable:  false
      */
+	 @ApiModelProperty(value="三位货币代码,人民币:cny")
     private String currency;
 
     /**
@@ -73,6 +81,7 @@ public class PayOrder extends BaseEntity {
      * Column:    status
      * Nullable:  false
      */
+	 @ApiModelProperty(value="支付状态,0-订单生成,1-支付中(目前未使用),2-支付成功,3-业务处理完成",example="0")
     private Byte status;
 
     /**
@@ -81,6 +90,7 @@ public class PayOrder extends BaseEntity {
      * Column:    client_ip
      * Nullable:  true
      */
+	 @ApiModelProperty(value="客户端IP")
     private String clientIp;
 
     /**
@@ -89,6 +99,7 @@ public class PayOrder extends BaseEntity {
      * Column:    device
      * Nullable:  true
      */
+	 @ApiModelProperty(value="设备")
     private String device;
 
     /**
@@ -97,6 +108,7 @@ public class PayOrder extends BaseEntity {
      * Column:    subject
      * Nullable:  false
      */
+	 @ApiModelProperty(value="商品标题")
     private String subject;
 
     /**
@@ -105,6 +117,7 @@ public class PayOrder extends BaseEntity {
      * Column:    body
      * Nullable:  false
      */
+	 @ApiModelProperty(value="商品描述信息")
     private String body;
 
     /**
@@ -113,6 +126,7 @@ public class PayOrder extends BaseEntity {
      * Column:    extra
      * Nullable:  true
      */
+	 @ApiModelProperty(value="特定渠道发起时额外参数")
     private String extra;
 
     /**
@@ -121,6 +135,7 @@ public class PayOrder extends BaseEntity {
      * Column:    channel_mch_id
      * Nullable:  false
      */
+	 @ApiModelProperty(value="渠道商户ID")
     private String channelMchId;
 
     /**
@@ -129,6 +144,7 @@ public class PayOrder extends BaseEntity {
      * Column:    channel_order_no
      * Nullable:  true
      */
+	 @ApiModelProperty(value="渠道订单号")
     private String channelOrderNo;
 
     /**
@@ -137,6 +153,7 @@ public class PayOrder extends BaseEntity {
      * Column:    err_code
      * Nullable:  true
      */
+	 @ApiModelProperty(value="渠道支付错误码")
     private String errCode;
 
     /**
@@ -145,6 +162,7 @@ public class PayOrder extends BaseEntity {
      * Column:    err_msg
      * Nullable:  true
      */
+	 @ApiModelProperty(value="渠道支付错误描述")
     private String errMsg;
 
     /**
@@ -153,6 +171,7 @@ public class PayOrder extends BaseEntity {
      * Column:    param1
      * Nullable:  true
      */
+	 @ApiModelProperty(value="展参数1")
     private String param1;
 
     /**
@@ -161,6 +180,7 @@ public class PayOrder extends BaseEntity {
      * Column:    param2
      * Nullable:  true
      */
+	 @ApiModelProperty(value="扩展参数2")
     private String param2;
 
     /**
@@ -169,6 +189,7 @@ public class PayOrder extends BaseEntity {
      * Column:    notify_url
      * Nullable:  false
      */
+	 @ApiModelProperty(value="通知地址")
     private String notifyUrl;
 
     /**
@@ -177,6 +198,7 @@ public class PayOrder extends BaseEntity {
      * Column:    notify_count
      * Nullable:  false
      */
+	 @ApiModelProperty(value="通知次数",example="0")
     private Byte notifyCount;
 
     /**
@@ -185,6 +207,9 @@ public class PayOrder extends BaseEntity {
      * Column:    last_notify_time
      * Nullable:  true
      */
+	@ApiModelProperty(value=" 最后一次通知时间",example="0")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Long lastNotifyTime;
 
     /**
@@ -193,7 +218,10 @@ public class PayOrder extends BaseEntity {
      * Column:    expire_time
      * Nullable:  true
      */
-    private Long expireTime;
+	 @ApiModelProperty(value="订单失效时间",example="0")
+	 @JSONField(format="yyyy-MM-dd HH:mm:ss")
+	 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+     private Long expireTime;
 
     /**
      * 订单支付成功时间
@@ -201,5 +229,8 @@ public class PayOrder extends BaseEntity {
      * Column:    pay_succ_time
      * Nullable:  true
      */
+	 @ApiModelProperty(value="订单支付成功时间",example="0")
+	 @JSONField(format="yyyy-MM-dd HH:mm:ss")
+	 @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Long paySuccTime;
 }

@@ -1,13 +1,17 @@
 package org.forbes.comm.util;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.apache.commons.beanutils.converters.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import org.apache.commons.beanutils.converters.DoubleConverter;
+import org.apache.commons.beanutils.converters.IntegerConverter;
+import org.apache.commons.beanutils.converters.LongConverter;
+import org.apache.commons.beanutils.converters.ShortConverter;
 /****
  * BeanConvertUtils概要说明：
  * @author Huanghy
@@ -30,9 +34,9 @@ public class BeanConvertUtils {
      * @param obj
      * @return
      */
-    public static Map<String, Object> bean2Map(Object obj) {
+    public static Map<String, String> bean2Map(Object obj) {
         try {
-            Map<String, Object> map = BeanUtils.describe(obj);
+            Map<String, String> map = BeanUtils.describe(obj);
             map.remove("class");
             return map;
         } catch (IllegalAccessException e) {

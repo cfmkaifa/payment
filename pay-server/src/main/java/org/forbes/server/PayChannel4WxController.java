@@ -1,4 +1,4 @@
-package org.forbes.provider;
+package org.forbes.server;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +8,13 @@ import javax.annotation.Resource;
 import org.forbes.biz.IMchInfoService;
 import org.forbes.biz.IPayChannelService;
 import org.forbes.biz.IPayOrderService;
+import org.forbes.comm.constant.DataColumnConstant;
 import org.forbes.comm.constant.PayConstant;
-import org.forbes.comm.constant.PayEnum;
+import org.forbes.comm.enumm.PayEnum;
 import org.forbes.comm.util.MyBase64;
+import org.forbes.comm.util.XXPayUtil;
+import org.forbes.config.channel.wechat.WxPayProperties;
+import org.forbes.config.channel.wechat.WxPayUtil;
 import org.forbes.dal.entity.MchInfo;
 import org.forbes.dal.entity.PayChannel;
 import org.forbes.dal.entity.PayOrder;
@@ -21,6 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.constant.WxPayConstants;
+import com.github.binarywang.wxpay.exception.WxPayException;
+import com.github.binarywang.wxpay.service.WxPayService;
+import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
+import com.github.binarywang.wxpay.util.SignUtils;
 
 import lombok.extern.slf4j.Slf4j;
 /***
@@ -57,10 +70,13 @@ public class PayChannel4WxController{
             String logPrefix = "【微信支付统一下单】";
             String mchId = payOrder.getMchId();
             String channelId = payOrder.getChannelId();
-            MchInfo mchInfo = mchInfoService.selectMchInfo(mchId);
+            MchInfo mchInfo = mchInfoService.getOne(new QueryWrapper<MchInfo>()
+            		.eq(DataColumnConstant.MCH_ID, mchId));
             String resKey = mchInfo == null ? "" : mchInfo.getResKey();
             if("".equals(resKey)) return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
-            PayChannel payChannel = payChannelService.selectPayChannel(channelId, mchId);
+            PayChannel payChannel = payChannelService.getOne(new QueryWrapper<PayChannel>()
+            		.eq(DataColumnConstant.CHANNEL_ID, channelId)
+            		.eq(DataColumnConstant.MCH_ID, mchId));
             WxPayConfig wxPayConfig = WxPayUtil.getWxPayConfig(payChannel.getParam(), tradeType, wxPayProperties.getCertRootPath(), wxPayProperties.getNotifyUrl());
             WxPayService wxPayService = new WxPayServiceImpl();
             wxPayService.setConfig(wxPayConfig);
@@ -73,7 +89,8 @@ public class PayChannel4WxController{
                 Map<String, Object> map = XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_SUCCESS, null);
                 map.put("payOrderId", payOrderId);
                 map.put("prepayId", wxPayUnifiedOrderResult.getPrepayId());
-                int result = payOrderService.updateStatus4Ing(payOrderId, wxPayUnifiedOrderResult.getPrepayId());
+                
+                int result = payOrderService.updateStatus4Ing(payOrderId,wxPayUnifiedOrderResult.getPrepayId());
                 log.info("更新第三方支付订单号:payOrderId={},prepayId={},result={}", payOrderId, wxPayUnifiedOrderResult.getPrepayId(), result);
                 switch (tradeType) {
                     case PayConstant.WxConstant.TRADE_TYPE_NATIVE : {
@@ -128,7 +145,7 @@ public class PayChannel4WxController{
                 }
                 return XXPayUtil.makeRetData(map, resKey);
             } catch (WxPayException e) {
-                log.error(e, "下单失败");
+                log.trace("下单失败",e);
                 //出现业务错误
                 log.info("{}下单返回失败", logPrefix);
                 log.info("err_code:{}", e.getErrCode());
@@ -136,7 +153,7 @@ public class PayChannel4WxController{
                 return XXPayUtil.makeRetData(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_SUCCESS, "", PayConstant.RETURN_VALUE_FAIL, "0111", "调用微信支付失败," + e.getErrCode() + ":" + e.getErrCodeDes()), resKey);
             }
         }catch (Exception e) {
-            log.error(e, "微信支付统一下单异常");
+            log.trace("微信支付统一下单异常",e);
             return XXPayUtil.makeRetFail(XXPayUtil.makeRetMap(PayConstant.RETURN_VALUE_FAIL, "", PayConstant.RETURN_VALUE_FAIL, PayEnum.ERR_0001));
         }
     }

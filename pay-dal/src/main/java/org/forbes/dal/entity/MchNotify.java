@@ -2,12 +2,14 @@ package org.forbes.dal.entity;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * Table: f_mch_notify
@@ -15,7 +17,6 @@ import lombok.experimental.Accessors;
 @Data
 @ApiModel(description="商家通知")
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName(value="f_mch_notify")
 public class MchNotify extends BaseEntity {
    
@@ -27,6 +28,7 @@ public class MchNotify extends BaseEntity {
      * Column:    order_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="订单ID")
     private String orderId;
 
     /**
@@ -35,6 +37,7 @@ public class MchNotify extends BaseEntity {
      * Column:    mch_id
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户ID")
     private String mchId;
 
     /**
@@ -43,6 +46,7 @@ public class MchNotify extends BaseEntity {
      * Column:    mch_order_no
      * Nullable:  false
      */
+	@ApiModelProperty(value="商户订单号")
     private String mchOrderNo;
 
     /**
@@ -51,6 +55,7 @@ public class MchNotify extends BaseEntity {
      * Column:    order_type
      * Nullable:  false
      */
+	@ApiModelProperty(value="订单类型")
     private String orderType;
 
     /**
@@ -59,6 +64,7 @@ public class MchNotify extends BaseEntity {
      * Column:    notify_url
      * Nullable:  false
      */
+	@ApiModelProperty(value="通知地址")
     private String notifyUrl;
 
     /**
@@ -67,6 +73,7 @@ public class MchNotify extends BaseEntity {
      * Column:    notify_count
      * Nullable:  false
      */
+	@ApiModelProperty(value="通知次数",example="0")
     private Byte notifyCount;
 
     /**
@@ -75,6 +82,7 @@ public class MchNotify extends BaseEntity {
      * Column:    result
      * Nullable:  true
      */
+	@ApiModelProperty(value="通知响应结果")
     private String result;
 
     /**
@@ -83,6 +91,7 @@ public class MchNotify extends BaseEntity {
      * Column:    status
      * Nullable:  false
      */
+	@ApiModelProperty(value="通知状态")
     private Byte status;
 
     /**
@@ -91,5 +100,8 @@ public class MchNotify extends BaseEntity {
      * Column:    last_notify_time
      * Nullable:  true
      */
+	@ApiModelProperty(value="最后一次通知时间")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date lastNotifyTime;
 }
